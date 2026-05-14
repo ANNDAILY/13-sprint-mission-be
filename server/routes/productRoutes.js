@@ -3,7 +3,8 @@
  */
 const express = require("express");
 const router = express.Router();
-const Product = require("../models/Product");
+const prisma = require("../lib/prisma");
+
 // [상품 등록 API - POST 요청 처리]
 router.post("/items", async (req, res) => {
   try {
@@ -13,17 +14,17 @@ router.post("/items", async (req, res) => {
       return res.status(400).json({ message: "상품명은 필수입니다." });
     }
 
-    const newProduct = new Product({
-      title: title || name,
-      price: Number(price),
-      description: description,
+    const savedProduct = await prisma.product.create({
+      data: {
+        title: title || name,
+        price: Number(price),
+        description: description,
+      },
     });
-
-    const savedProduct = await newProduct.save();
 
     res.status(201).json({
       message: "상품이 성공적으로 등록되었습니다.",
-      id: savedProduct._id,
+      id: savedProduct.id,
     });
   } catch (err) {
     console.error("상품 등록 중 에러:", err);
@@ -39,11 +40,12 @@ router.get("/items", async (req, res) => {
     const pageSize = parseInt(req.query.pageSize) || 10;
     const skip = (page - 1) * pageSize;
 
-    const totalCount = await Product.countDocuments();
-    const products = await Product.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(pageSize);
+    const totalCount = await prisma.product.count();
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+      skip: skip,
+      take: pageSize,
+    });
 
     res.status(200).json({ list: products, totalCount });
   } catch (err) {

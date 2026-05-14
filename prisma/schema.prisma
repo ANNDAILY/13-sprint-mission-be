@@ -1,0 +1,24 @@
+// 이 파일은 Prisma 스키마 파일입니다.
+// 공식 문서에서 더 자세한 내용을 알아보세요: https://pris.ly/d/prisma-schema
+
+// 쿼리 속도를 높이거나 서버리스 또는 엣지 함수에서 효율적으로 확장하는 방법을 찾고 계신가요?
+// Prisma Accelerate를 확인해 보세요: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String
+  price       Int
+  description String   @default("상세 설명이 없습니다.")
+  tags        String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

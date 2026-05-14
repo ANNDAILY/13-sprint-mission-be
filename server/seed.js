@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const Product = require("./models/Product");
+const prisma = require("./lib/prisma");
 
 // [환경 설정 불러오기]
 dotenv.config();
@@ -28,19 +27,17 @@ const seedDatabase = async () => {
   try {
     // 1. DB 연결
     console.log("⏳ 데이터베이스 연결 중...");
-    await mongoose.connect(process.env.DATABASE_URL);
-    console.log("✅ 데이터베이스 연결 성공!");
 
     // 2. 기존 데이터 삭제 (중복 방지)
-    await Product.deleteMany({});
+    await prisma.product.deleteMany({});
     console.log("🧹 기존 데이터를 모두 삭제했습니다.");
 
     // 3. 새 데이터 삽입
-    await Product.insertMany(mockData);
+    await prisma.product.createMany({ data: mockData });
     console.log("🌱 테스트용 데이터 3개가 성공적으로 등록되었습니다.");
 
     // 4. 연결 종료
-    mongoose.connection.close();
+    await prisma.$disconnect();
     console.log("👋 작업을 마치고 DB 연결을 종료합니다.");
     process.exit();
   } catch (err) {
