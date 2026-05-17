@@ -1,9 +1,3 @@
-// 이 파일은 Prisma 스키마 파일입니다.
-// 공식 문서에서 더 자세한 내용을 알아보세요: https://pris.ly/d/prisma-schema
-
-// 쿼리 속도를 높이거나 서버리스 또는 엣지 함수에서 효율적으로 확장하는 방법을 찾고 계신가요?
-// Prisma Accelerate를 확인해 보세요: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
